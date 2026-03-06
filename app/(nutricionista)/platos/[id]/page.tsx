@@ -46,10 +46,7 @@ export default function PlatoEditorPage({ params }: { params: { id: string } }) 
     }, [isNew, params.id])
 
     const handleAddIngredient = (food: Food, portion: Portion | undefined, quantity: number, weight: number) => {
-        const { calories, protein, carbs, fat, fiber } = calculateDishMacros([{
-            id: 'temp', dish_id: '', food_id: food.id, quantity, weight_grams: weight,
-            calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, food // temp zero macros to pass to calculator
-        }]) // Wait calculateIngredientMacros should be better, but we have the util calculateDishMacros.
+        // Wait calculateIngredientMacros should be better, but we have the util calculateDishMacros.
 
         // Let's use calculateIngredientMacros directly to be exact for this row
         const factor = weight / 100
@@ -102,6 +99,7 @@ export default function PlatoEditorPage({ params }: { params: { id: string } }) 
                 body: JSON.stringify({
                     dish: dishPayload,
                     // Strip populated food/portion out before sending to API
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     ingredients: ingredients.map(({ food, portion, id, ...rest }) => rest)
                 })
             })

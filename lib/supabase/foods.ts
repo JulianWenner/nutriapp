@@ -22,6 +22,7 @@ export async function searchFoods(query: string): Promise<Food[]> {
     }
 
     // Cast the mapped data to match Food[] signature
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (data ?? []).map((row: any) => ({
         ...row,
         portions: row.portions || []

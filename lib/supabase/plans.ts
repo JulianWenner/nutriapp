@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import type { NutritionPlan, PlanMeal } from '@/types'
+import type { NutritionPlan } from '@/types'
 
 /** Obtener la lista de todos los planes de la nutricionista */
 export async function getPlans(): Promise<NutritionPlan[]> {
@@ -55,6 +55,7 @@ export async function getPlanWithMeals(planId: string): Promise<NutritionPlan | 
                 plan.meals = plan.meals.map(meal => {
                     const mappedDishes = meal.dish_ids.map(
                         id => dishesData.find(d => d.id === id)
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     ).filter(Boolean) as any[]
 
                     return { ...meal, dishes: mappedDishes }

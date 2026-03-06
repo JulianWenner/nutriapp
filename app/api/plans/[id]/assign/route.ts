@@ -16,7 +16,7 @@ export async function POST(
         await assignPlanToPatient(params.id, patientId)
 
         return NextResponse.json({ success: true }, { status: 200 })
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 })
+    } catch (e: unknown) {
+        return NextResponse.json({ error: (e as Error).message }, { status: 500 })
     }
 }

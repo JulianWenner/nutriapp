@@ -8,8 +8,8 @@ export async function GET(request: Request) {
     try {
         const dishes = await getDishes(tag)
         return NextResponse.json(dishes)
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 })
+    } catch (e: unknown) {
+        return NextResponse.json({ error: (e as Error).message }, { status: 500 })
     }
 }
 
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Failed to create dish' }, { status: 500 })
         }
         return NextResponse.json(newDish, { status: 201 })
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 })
+    } catch (e: unknown) {
+        return NextResponse.json({ error: (e as Error).message }, { status: 500 })
     }
 }

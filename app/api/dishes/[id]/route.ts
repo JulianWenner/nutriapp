@@ -11,8 +11,8 @@ export async function GET(
             return NextResponse.json({ error: 'Dish not found' }, { status: 404 })
         }
         return NextResponse.json(dish)
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 })
+    } catch (e: unknown) {
+        return NextResponse.json({ error: (e as Error).message }, { status: 500 })
     }
 }
 
@@ -28,8 +28,8 @@ export async function PUT(
             return NextResponse.json({ error: 'Failed to update dish' }, { status: 500 })
         }
         return NextResponse.json(updatedDish)
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 })
+    } catch (e: unknown) {
+        return NextResponse.json({ error: (e as Error).message }, { status: 500 })
     }
 }
 
@@ -43,7 +43,7 @@ export async function DELETE(
             return NextResponse.json({ error: 'Failed to delete dish' }, { status: 500 })
         }
         return new NextResponse(null, { status: 204 })
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 })
+    } catch (e: unknown) {
+        return NextResponse.json({ error: (e as Error).message }, { status: 500 })
     }
 }

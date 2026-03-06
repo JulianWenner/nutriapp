@@ -41,7 +41,7 @@ export default function AssignPlanModal({ isOpen, onClose, planId, planName, onA
                 } else {
                     setError('Error al cargar pacientes')
                 }
-            } catch (err) {
+            } catch {
                 setError('Error de red')
             } finally {
                 setLoading(false)
@@ -70,7 +70,7 @@ export default function AssignPlanModal({ isOpen, onClose, planId, planName, onA
                 const data = await res.json()
                 setError(data.error || 'Error al asignar el plan')
             }
-        } catch (e) {
+        } catch {
             setError('Error de red')
         } finally {
             setAssigning(false)
@@ -89,7 +89,7 @@ export default function AssignPlanModal({ isOpen, onClose, planId, planName, onA
         <Modal isOpen={isOpen} onClose={onClose} title="Asignar Plan">
             <div className="space-y-4 pt-2">
                 <p className="text-sm text-slate-600">
-                    Seleccioná a qué paciente querés asignarle el plan <strong>"{planName}"</strong>.
+                    Seleccioná a qué paciente querés asignarle el plan <strong>&quot;{planName}&quot;</strong>.
                     <br /><br />
                     Esto reemplazará cualquier plan que el paciente tenga actualmente activo.
                 </p>

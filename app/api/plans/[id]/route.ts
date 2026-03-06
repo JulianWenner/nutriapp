@@ -11,8 +11,8 @@ export async function GET(
             return NextResponse.json({ error: 'Plan not found' }, { status: 404 })
         }
         return NextResponse.json(plan)
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 })
+    } catch (e: unknown) {
+        return NextResponse.json({ error: (e as Error).message }, { status: 500 })
     }
 }
 
@@ -28,7 +28,7 @@ export async function PUT(
             return NextResponse.json({ error: 'Failed to update plan' }, { status: 500 })
         }
         return NextResponse.json(updatedPlan)
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 })
+    } catch (e: unknown) {
+        return NextResponse.json({ error: (e as Error).message }, { status: 500 })
     }
 }

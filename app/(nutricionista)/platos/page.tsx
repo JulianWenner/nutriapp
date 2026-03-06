@@ -51,7 +51,7 @@ export default function PlatosPage() {
                     {dishes.length === 0 ? (
                         <div className="col-span-full text-center py-12 text-slate-500 bg-white rounded-2xl border border-dashed border-slate-200">
                             <p className="font-medium text-slate-600 mb-2">No hay platos creados aún.</p>
-                            <p className="text-sm">Haga clic en "Nuevo Plato" para empezar.</p>
+                            <p className="text-sm">Haga clic en &quot;Nuevo Plato&quot; para empezar.</p>
                         </div>
                     ) : (
                         dishes.map(dish => (

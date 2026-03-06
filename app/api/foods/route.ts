@@ -8,8 +8,8 @@ export async function GET(request: Request) {
     try {
         const results = await searchFoods(query)
         return NextResponse.json(results)
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 })
+    } catch (e: unknown) {
+        return NextResponse.json({ error: (e as Error).message }, { status: 500 })
     }
 }
 
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Failed to create food' }, { status: 500 })
         }
         return NextResponse.json(newFood, { status: 201 })
-    } catch (e: any) {
-        return NextResponse.json({ error: e.message }, { status: 500 })
+    } catch (e: unknown) {
+        return NextResponse.json({ error: (e as Error).message }, { status: 500 })
     }
 }
