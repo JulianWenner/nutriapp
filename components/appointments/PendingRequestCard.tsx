@@ -55,7 +55,7 @@ export default function PendingRequestCard({
                         </p>
                     )}
                     {request.message && (
-                        <p className="text-xs text-gray-500 mt-1 italic">"{request.message}"</p>
+                        <p className="text-xs text-gray-500 mt-1 italic">&quot;{request.message}&quot;</p>
                     )}
                 </div>
                 <span className="flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold"

@@ -40,13 +40,19 @@ export async function getAppointmentsByWeek(
         return []
     }
 
-    return (data ?? []).map((row: any) => ({
+    interface AppointmentRow {
+        patients?: { profiles?: { full_name?: string; email?: string } }
+        [key: string]: unknown
+    }
+
+    const rows = data as unknown as AppointmentRow[]
+    return (rows ?? []).map((row) => ({
         ...row,
         patient: {
             full_name: row.patients?.profiles?.full_name ?? '',
             email: row.patients?.profiles?.email ?? '',
         },
-    }))
+    })) as Appointment[]
 }
 
 /** Próximo turno confirmado de un paciente */
@@ -96,12 +102,18 @@ export async function getPendingRequests(): Promise<AppointmentRequest[]> {
         return []
     }
 
-    return (data ?? []).map((row: any) => ({
+    interface RequestRow {
+        patients?: { profiles?: { full_name?: string } }
+        [key: string]: unknown
+    }
+
+    const rows = data as unknown as RequestRow[]
+    return (rows ?? []).map((row) => ({
         ...row,
         patient: {
             full_name: row.patients?.profiles?.full_name ?? '',
         },
-    }))
+    })) as AppointmentRequest[]
 }
 
 /** Crear un turno nuevo */
@@ -288,7 +300,14 @@ export async function getAllPatients(): Promise<
         .select('id, profiles!inner(full_name)')
 
     if (error) return []
-    return (data ?? []).map((row: any) => ({
+    interface PatientRow {
+        id: string
+        profiles?: { full_name?: string }
+        [key: string]: unknown
+    }
+
+    const rows = data as unknown as PatientRow[]
+    return (rows ?? []).map((row) => ({
         id: row.id,
         full_name: row.profiles?.full_name ?? '',
     }))
