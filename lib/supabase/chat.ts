@@ -27,7 +27,7 @@ export async function getDailyUsage(patientId: string): Promise<AIUsage> {
         .eq('date', today)
         .single()
 
-    const limit = parseInt(process.env.AI_DAILY_MESSAGE_LIMIT || '20')
+    const limit = parseInt(process.env.AI_DAILY_MESSAGE_LIMIT || '50')
     const count = data ? data.message_count : 0
 
     return {
