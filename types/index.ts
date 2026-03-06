@@ -251,3 +251,42 @@ export interface AnthropometryEval {
   created_at: string
 }
 
+// --- Fase 5: Portal del Paciente + Asistente IA ---
+
+export interface MealAdherence {
+  id: string
+  patient_id: string
+  plan_meal_id: string
+  week_start: string        // YYYY-MM-DD (lunes de la semana)
+  completed: boolean
+  completed_at?: string
+  comment?: string
+}
+
+export interface AdherenceSummary {
+  total_meals: number
+  completed_meals: number
+  percentage: number        // 0-100
+  by_day: {
+    day_of_week: number     // 1-7
+    total: number
+    completed: number
+    percentage: number
+  }[]
+}
+
+export interface ChatMessage {
+  id: string
+  patient_id: string
+  role: 'user' | 'assistant'
+  content: string
+  image_url?: string
+  created_at: string
+}
+
+export interface AIUsage {
+  date: string
+  message_count: number
+  limit: number
+  remaining: number
+}

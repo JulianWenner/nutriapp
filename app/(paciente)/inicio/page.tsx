@@ -1,15 +1,11 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import {
-    getNextAppointment,
-    getPatientIdFromProfileId,
-} from '@/lib/supabase/appointments'
+import { getNextAppointment, getPatientIdFromProfileId } from '@/lib/supabase/appointments'
 import { getActivePlanForPatient } from '@/lib/supabase/plans'
-import { APPOINTMENT_TYPE_LABELS } from '@/types'
-import Link from 'next/link'
-import PlanCard from '@/components/plans/PlanCard'
-
-const TZ = 'America/Argentina/Buenos_Aires'
+import { getSharedEvals } from '@/lib/supabase/anthropometry'
+import HomeAppointmentCard from '@/components/patient-portal/HomeAppointmentCard'
+import HomePlanCard from '@/components/patient-portal/HomePlanCard'
+import HomeEvalCard from '@/components/patient-portal/HomeEvalCard'
 
 export default async function InicioPacientePage() {
     const supabase = createClient()
@@ -25,8 +21,15 @@ export default async function InicioPacientePage() {
     if (profile?.role !== 'paciente') redirect('/dashboard')
 
     const patientId = await getPatientIdFromProfileId(user.id)
-    const nextAppointment = patientId ? await getNextAppointment(patientId) : null
-    const activePlan = patientId ? await getActivePlanForPatient(patientId) : null
+
+    // Ejecución en paralelo de las queries iniciales
+    const [nextAppointment, activePlan, sharedEvals] = patientId ? await Promise.all([
+        getNextAppointment(patientId),
+        getActivePlanForPatient(patientId),
+        getSharedEvals(patientId)
+    ]) : [null, null, []]
+
+    const lastEval = sharedEvals.length > 0 ? sharedEvals[0] : null
 
     async function signOut() {
         'use server'
@@ -35,84 +38,56 @@ export default async function InicioPacientePage() {
         redirect('/login')
     }
 
-    const nextDateFormatted = nextAppointment
-        ? new Date(nextAppointment.date + 'T00:00:00').toLocaleDateString('es-AR', {
-            weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: TZ,
-        })
-        : null
-
     return (
-        <main className="min-h-screen" style={{ backgroundColor: '#EEF4F3' }}>
-            <div className="max-w-lg mx-auto px-4 py-6 space-y-5">
+        <main className="min-h-screen pb-20" style={{ backgroundColor: '#F8FAFC' }}>
+            <div className="max-w-lg mx-auto px-4 py-8 space-y-8">
 
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-xl font-bold text-dark">Portal paciente</h1>
-                        <p className="text-sm text-gray-500 mt-0.5">
-                            Hola, <span className="font-semibold text-dark">{profile?.full_name || user.email}</span>
-                        </p>
+                        <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mb-1">Bienvenido de nuevo</p>
+                        <h1 className="text-3xl font-black text-slate-900 leading-none">
+                            Hola, {profile?.full_name?.split(' ')[0] || 'Paciente'}
+                        </h1>
                     </div>
                     <form action={signOut}>
-                        <button type="submit" className="text-xs px-3 py-1.5 rounded-lg border border-border text-dark hover:bg-white transition">
-                            Salir
+                        <button type="submit" className="w-10 h-10 flex items-center justify-center rounded-2xl bg-white border border-slate-100 shadow-sm text-slate-400 hover:text-red-500 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
                         </button>
                     </form>
                 </div>
 
-                {/* Card próximo turno */}
-                <section>
-                    <div className="flex items-center justify-between mb-3">
-                        <h2 className="text-sm font-semibold text-dark">Próximo turno</h2>
-                        <Link href="/mis-turnos" className="text-xs font-semibold" style={{ color: '#0D7C72' }}>
-                            Ver todos →
-                        </Link>
-                    </div>
+                {/* Grid de Cards */}
+                <div className="grid grid-cols-1 gap-6">
+                    {/* Bloque 1: Turno */}
+                    <HomeAppointmentCard appointment={nextAppointment} />
 
-                    {nextAppointment ? (
-                        <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-sm">
-                            <div className="px-5 py-5">
-                                <p className="text-xs text-gray-400 capitalize">{nextDateFormatted}</p>
-                                <p className="text-3xl font-bold text-dark mt-1">{nextAppointment.time?.slice(0, 5)}</p>
-                                <p className="text-sm text-gray-500 mt-1">{APPOINTMENT_TYPE_LABELS[nextAppointment.type]}</p>
-                            </div>
-                            <div className="border-t border-border px-5 py-3 flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: '#3BAD7A' }} />
-                                <span className="text-xs text-gray-500">Confirmado</span>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="bg-white rounded-2xl border border-border px-5 py-8 text-center space-y-3 shadow-sm">
-                            <p className="text-sm text-gray-400">No tenés turnos agendados.</p>
-                            <Link
-                                href="/mis-turnos"
-                                className="inline-block px-5 py-2 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
-                                style={{ backgroundColor: '#0D7C72' }}
-                            >
-                                Solicitar turno
-                            </Link>
-                        </div>
-                    )}
-                </section>
+                    {/* Bloque 2: Plan */}
+                    <HomePlanCard plan={activePlan} />
 
-                {/* Plan Alimentario */}
-                <section>
-                    <div className="flex items-center justify-between mb-3">
-                        <h2 className="text-sm font-semibold text-dark">Plan Alimentario</h2>
+                    {/* Bloque 3: Evaluación */}
+                    {lastEval && <HomeEvalCard evaluation={lastEval} />}
+                </div>
+
+                {/* Acceso rápido Asistente */}
+                <Link href="/asistente" className="flex items-center gap-4 p-5 bg-teal-600 rounded-3xl text-white shadow-lg shadow-teal-600/20 hover:scale-[1.02] active:scale-95 transition-all">
+                    <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 8-9.04 9.06a2.82 2.82 0 1 0 3.98 3.98L16 12" /><circle cx="17" cy="7" r="5" /></svg>
                     </div>
-                    {activePlan ? (
-                        <div className="shadow-sm">
-                            <PlanCard plan={activePlan} />
-                        </div>
-                    ) : (
-                        <div className="bg-white rounded-2xl border border-border px-5 py-8 text-center shadow-sm">
-                            <p className="text-sm text-gray-400">No tenés un plan activo asignado.</p>
-                            <p className="text-xs text-gray-400 mt-1">Consultá con tu nutricionista.</p>
-                        </div>
-                    )}
-                </section>
+                    <div>
+                        <h4 className="font-bold text-lg">Asistente Virtual IA</h4>
+                        <p className="text-teal-50 text-xs opacity-80">Consultá sobre tu plan o alimentos</p>
+                    </div>
+                    <div className="ml-auto">
+                        <ChevronRight className="w-6 h-6 text-white/50" />
+                    </div>
+                </Link>
 
             </div>
         </main>
     )
 }
+
+// Necesitamos importar Link y ChevronRight que no estaban en las props del componente pero sí en el JSX generado arriba
+import Link from 'next/link'
+import { ChevronRight } from 'lucide-react'
