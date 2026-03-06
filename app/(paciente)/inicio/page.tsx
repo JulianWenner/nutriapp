@@ -4,8 +4,10 @@ import {
     getNextAppointment,
     getPatientIdFromProfileId,
 } from '@/lib/supabase/appointments'
+import { getActivePlanForPatient } from '@/lib/supabase/plans'
 import { APPOINTMENT_TYPE_LABELS } from '@/types'
 import Link from 'next/link'
+import PlanCard from '@/components/plans/PlanCard'
 
 const TZ = 'America/Argentina/Buenos_Aires'
 
@@ -24,6 +26,7 @@ export default async function InicioPacientePage() {
 
     const patientId = await getPatientIdFromProfileId(user.id)
     const nextAppointment = patientId ? await getNextAppointment(patientId) : null
+    const activePlan = patientId ? await getActivePlanForPatient(patientId) : null
 
     async function signOut() {
         'use server'
@@ -67,7 +70,7 @@ export default async function InicioPacientePage() {
                     </div>
 
                     {nextAppointment ? (
-                        <div className="bg-white rounded-2xl border border-border overflow-hidden">
+                        <div className="bg-white rounded-2xl border border-border overflow-hidden shadow-sm">
                             <div className="px-5 py-5">
                                 <p className="text-xs text-gray-400 capitalize">{nextDateFormatted}</p>
                                 <p className="text-3xl font-bold text-dark mt-1">{nextAppointment.time?.slice(0, 5)}</p>
@@ -79,11 +82,11 @@ export default async function InicioPacientePage() {
                             </div>
                         </div>
                     ) : (
-                        <div className="bg-white rounded-2xl border border-border px-5 py-8 text-center space-y-3">
+                        <div className="bg-white rounded-2xl border border-border px-5 py-8 text-center space-y-3 shadow-sm">
                             <p className="text-sm text-gray-400">No tenés turnos agendados.</p>
                             <Link
                                 href="/mis-turnos"
-                                className="inline-block px-5 py-2 rounded-xl text-sm font-semibold text-white"
+                                className="inline-block px-5 py-2 rounded-xl text-sm font-semibold text-white transition-opacity hover:opacity-90"
                                 style={{ backgroundColor: '#0D7C72' }}
                             >
                                 Solicitar turno
@@ -92,12 +95,21 @@ export default async function InicioPacientePage() {
                     )}
                 </section>
 
-                {/* Placeholder Fase 3 */}
+                {/* Plan Alimentario */}
                 <section>
-                    <div className="rounded-xl border-2 border-dashed px-5 py-6 text-center" style={{ borderColor: '#D4E8E5', backgroundColor: '#f0faf9' }}>
-                        <p className="text-sm font-medium" style={{ color: '#0D7C72' }}>🚧 Más funciones en la Fase 3</p>
-                        <p className="text-xs text-gray-400 mt-1">Plan alimentario, métricas y más</p>
+                    <div className="flex items-center justify-between mb-3">
+                        <h2 className="text-sm font-semibold text-dark">Plan Alimentario</h2>
                     </div>
+                    {activePlan ? (
+                        <div className="shadow-sm">
+                            <PlanCard plan={activePlan} />
+                        </div>
+                    ) : (
+                        <div className="bg-white rounded-2xl border border-border px-5 py-8 text-center shadow-sm">
+                            <p className="text-sm text-gray-400">No tenés un plan activo asignado.</p>
+                            <p className="text-xs text-gray-400 mt-1">Consultá con tu nutricionista.</p>
+                        </div>
+                    )}
                 </section>
 
             </div>

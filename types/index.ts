@@ -74,3 +74,108 @@ export const REQUEST_TYPE_LABELS: Record<RequestType, string> = {
   cambio: 'Solicitud de cambio de turno',
   cancelacion: 'Solicitud de cancelación',
 }
+
+// --- Fase 3: Planes Nutricionales ---
+
+export interface Food {
+  id: string
+  name: string
+  calories_per_100g: number
+  protein_per_100g: number
+  carbs_per_100g: number
+  fat_per_100g: number
+  fiber_per_100g: number
+  source: 'usda' | 'sara' | 'custom'
+  external_id?: string
+  is_public: boolean
+  portions?: Portion[]
+}
+
+export interface Portion {
+  id: string
+  food_id: string
+  name: string
+  weight_grams: number
+}
+
+export interface DishIngredient {
+  id: string
+  dish_id: string
+  food_id: string
+  portion_id?: string
+  quantity: number
+  weight_grams: number
+  calories: number
+  protein: number
+  carbs: number
+  fat: number
+  fiber: number
+  food?: Food
+  portion?: Portion
+}
+
+export interface Dish {
+  id: string
+  name: string
+  tag?: string
+  total_calories: number
+  total_protein: number
+  total_carbs: number
+  total_fat: number
+  total_fiber: number
+  ingredients?: DishIngredient[]
+}
+
+export type MealSlot =
+  | 'desayuno' | 'colacion_manana' | 'almuerzo'
+  | 'merienda' | 'colacion_tarde' | 'cena' | 'colacion_noche'
+
+export interface PlanMeal {
+  id: string
+  plan_id: string
+  day_of_week: number   // 1=Lunes ... 7=Domingo
+  meal_slot: MealSlot
+  dish_ids: string[]
+  dishes?: Dish[]       // populated via join
+}
+
+export interface NutritionPlan {
+  id: string
+  name: string
+  target_calories?: number
+  target_protein?: number
+  target_carbs?: number
+  target_fat?: number
+  meals?: PlanMeal[]
+}
+
+export interface MacroSummary {
+  calories: number
+  protein: number
+  carbs: number
+  fat: number
+  fiber: number
+}
+
+// Labels legibles para la UI
+export const MEAL_SLOT_LABELS: Record<MealSlot, string> = {
+  desayuno: '☀️ Desayuno',
+  colacion_manana: '🌤 Col. mañana',
+  almuerzo: '🌞 Almuerzo',
+  merienda: '🌤 Merienda',
+  colacion_tarde: '🌥 Col. tarde',
+  cena: '🌙 Cena',
+  colacion_noche: '🌑 Col. noche',
+}
+
+export const DAY_LABELS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom']
+
+export const TAG_LABELS: Record<string, string> = {
+  desayuno: 'Desayuno',
+  almuerzo: 'Almuerzo',
+  cena: 'Cena',
+  colacion: 'Colación',
+  merienda: 'Merienda',
+  alto_proteina: 'Alto en proteína',
+  otro: 'Otro',
+}
