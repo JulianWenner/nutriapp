@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import DishCard from '@/components/dishes/DishCard'
 import type { Dish } from '@/types'
+import { Skeleton } from '@/components/ui/Skeleton'
+import EmptyState from '@/components/ui/EmptyState'
+import { Utensils, Plus } from 'lucide-react'
 
 export default function PlatosPage() {
     const [dishes, setDishes] = useState<Dish[]>([])
@@ -45,13 +48,29 @@ export default function PlatosPage() {
             </header>
 
             {loading ? (
-                <div className="text-center py-10 text-slate-500">Cargando biblioteca...</div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <Skeleton className="h-64 rounded-3xl" />
+                    <Skeleton className="h-64 rounded-3xl" />
+                    <Skeleton className="h-64 rounded-3xl" />
+                    <Skeleton className="h-64 rounded-3xl" />
+                    <Skeleton className="h-64 rounded-3xl" />
+                    <Skeleton className="h-64 rounded-3xl" />
+                </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {dishes.length === 0 ? (
-                        <div className="col-span-full text-center py-12 text-slate-500 bg-white rounded-2xl border border-dashed border-slate-200">
-                            <p className="font-medium text-slate-600 mb-2">No hay platos creados aún.</p>
-                            <p className="text-sm">Haga clic en &quot;Nuevo Plato&quot; para empezar.</p>
+                        <div className="col-span-full">
+                            <EmptyState
+                                icon={Utensils}
+                                title="Sin platos aún"
+                                description="Arme su biblioteca de comidas para cargarlas rápidamente en sus planes."
+                                action={
+                                    <Link href="/platos/nuevo" className="bg-teal-600 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2">
+                                        <Plus size={20} />
+                                        Crear primer plato
+                                    </Link>
+                                }
+                            />
                         </div>
                     ) : (
                         dishes.map(dish => (

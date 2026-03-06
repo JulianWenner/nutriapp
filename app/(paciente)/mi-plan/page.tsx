@@ -8,7 +8,8 @@ import DayTabSelector from '@/components/patient-portal/DayTabSelector'
 import AdherenceBar from '@/components/patient-portal/AdherenceBar'
 import MealSlotCard from '@/components/patient-portal/MealSlotCard'
 import { toast } from 'sonner'
-import { Skeleton } from '@/components/ui/skeleton'
+import { Skeleton } from '@/components/ui/Skeleton'
+import { FileText } from 'lucide-react'
 
 export default function MiPlanPage() {
     const [plan, setPlan] = useState<NutritionPlan | null>(null)
@@ -135,6 +136,16 @@ export default function MiPlanPage() {
                         <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-1">Mi Seguimiento</p>
                         <h1 className="text-3xl font-black text-slate-900 leading-none">Mi Plan</h1>
                     </div>
+
+                    <a
+                        href={`/api/pdf/plan/${plan.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center border border-slate-100 shadow-sm text-teal-600 hover:bg-teal-50 transition-colors"
+                        title="Descargar PDF"
+                    >
+                        <FileText className="w-6 h-6" />
+                    </a>
                 </div>
 
                 {/* Día Selector */}

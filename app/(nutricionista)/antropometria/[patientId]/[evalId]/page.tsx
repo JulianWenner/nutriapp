@@ -133,10 +133,15 @@ export default function EvalResultDetail({ params }: { params: { patientId: stri
                             {showFigure ? 'Ocultar Figura Corporal' : 'Ver Figura Corporal'}
                         </button>
 
-                        <button disabled title="Siguiente fase" className="flex items-center justify-center gap-2 p-4 rounded-xl font-bold border-2 border-slate-100 text-slate-400 bg-white">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                            Exportar PDF (Próximamente)
-                        </button>
+                        <a
+                            href={`/api/pdf/eval/${evalData.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-2 p-4 rounded-xl font-bold bg-white border-2 border-slate-100 text-slate-700 hover:border-teal-300 transition-colors shadow-sm"
+                        >
+                            <svg className="w-5 h-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                            Exportar Informe PDF
+                        </a>
                     </div>
 
                     {/* Tabla de Indicadores */}

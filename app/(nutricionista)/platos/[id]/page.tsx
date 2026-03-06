@@ -9,6 +9,9 @@ import MacroSummaryCard from '@/components/dishes/MacroSummaryCard'
 import IngredientRow from '@/components/dishes/IngredientRow'
 import FoodSearchDrawer from '@/components/foods/FoodSearchDrawer'
 import { calculateDishMacros } from '@/lib/formulas/macros'
+import ConfirmModal from '@/components/ui/ConfirmModal'
+import { Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function PlatoEditorPage({ params }: { params: { id: string } }) {
     const router = useRouter()
@@ -21,8 +24,10 @@ export default function PlatoEditorPage({ params }: { params: { id: string } }) 
     const [tag, setTag] = useState('')
     const [ingredients, setIngredients] = useState<DishIngredient[]>([])
 
-    // Drawer state
+    // Drawer & Modal state
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [deleting, setDeleting] = useState(false)
 
     useEffect(() => {
         if (isNew) return
@@ -120,19 +125,50 @@ export default function PlatoEditorPage({ params }: { params: { id: string } }) 
     // Calculo total en vivo
     const totalMacros = calculateDishMacros(ingredients)
 
+    const handleDelete = async () => {
+        setDeleting(true)
+        try {
+            const res = await fetch(`/api/dishes/${params.id}`, { method: 'DELETE' })
+            if (res.ok) {
+                toast.success('Plato eliminado')
+                router.push('/platos')
+                router.refresh()
+            } else {
+                toast.error('No se pudo eliminar el plato')
+            }
+        } catch (e) {
+            toast.error('Error de conexión')
+        } finally {
+            setDeleting(false)
+            setIsDeleteModalOpen(false)
+        }
+    }
+
     if (loading) return <div className="p-8 text-center text-slate-500">Cargando editor...</div>
 
     return (
         <div className="max-w-4xl mx-auto pb-24 space-y-6">
-            <header className="flex items-center space-x-4 mb-4">
-                <Link href="/platos" className="p-2 -ml-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors">
-                    <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
-                    </svg>
-                </Link>
-                <h1 className="text-2xl font-black text-slate-800 tracking-tight">
-                    {isNew ? 'Nuevo Plato' : 'Editar Plato'}
-                </h1>
+            <header className="flex items-center justify-between mb-4">
+                <div className="flex items-center space-x-4">
+                    <Link href="/platos" className="p-2 -ml-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition-colors">
+                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </Link>
+                    <h1 className="text-2xl font-black text-slate-800 tracking-tight">
+                        {isNew ? 'Nuevo Plato' : 'Editar Plato'}
+                    </h1>
+                </div>
+
+                {!isNew && (
+                    <button
+                        onClick={() => setIsDeleteModalOpen(true)}
+                        className="p-3 text-rose-500 hover:bg-rose-50 rounded-2xl transition-colors"
+                        title="Eliminar Plato"
+                    >
+                        <Trash2 size={24} />
+                    </button>
+                )}
             </header>
 
             {/* Basic Info form */}
@@ -219,6 +255,16 @@ export default function PlatoEditorPage({ params }: { params: { id: string } }) 
                 isOpen={isDrawerOpen}
                 onClose={() => setIsDrawerOpen(false)}
                 onAddIngredient={handleAddIngredient}
+            />
+
+            <ConfirmModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDelete}
+                isLoading={deleting}
+                title="¿Eliminar este plato?"
+                description="Esta acción no se puede deshacer y el plato se quitará de todos los planes donde esté asignado."
+                confirmText="Eliminar Plato"
             />
         </div>
     )

@@ -4,6 +4,9 @@ import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import PlanCard from '@/components/plans/PlanCard'
 import type { NutritionPlan } from '@/types'
+import { Skeleton } from '@/components/ui/Skeleton'
+import EmptyState from '@/components/ui/EmptyState'
+import { ClipboardList, Plus } from 'lucide-react'
 
 export default function PlanesPage() {
     const [plans, setPlans] = useState<NutritionPlan[]>([])
@@ -45,13 +48,27 @@ export default function PlanesPage() {
             </header>
 
             {loading ? (
-                <div className="text-center py-10 text-slate-500">Cargando planes...</div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Skeleton className="h-48 rounded-3xl" />
+                    <Skeleton className="h-48 rounded-3xl" />
+                    <Skeleton className="h-48 rounded-3xl" />
+                    <Skeleton className="h-48 rounded-3xl" />
+                </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {plans.length === 0 ? (
-                        <div className="col-span-full text-center py-12 text-slate-500 bg-white rounded-2xl border border-dashed border-slate-200">
-                            <p className="font-medium text-slate-600 mb-2">No hay planes creados aún.</p>
-                            <p className="text-sm">Arme su primer plan nutricional para luego asignarlo.</p>
+                        <div className="col-span-full">
+                            <EmptyState
+                                icon={ClipboardList}
+                                title="No hay planes aún"
+                                description="Arme su primer plan nutricional para luego asignarlo a sus pacientes."
+                                action={
+                                    <Link href="/planes/nuevo" className="bg-teal-600 text-white font-bold py-3 px-6 rounded-xl flex items-center gap-2">
+                                        <Plus size={20} />
+                                        Crear primer plan
+                                    </Link>
+                                }
+                            />
                         </div>
                     ) : (
                         plans.map(plan => (

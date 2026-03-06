@@ -11,6 +11,7 @@ import DayMacroBar from '@/components/plans/DayMacroBar'
 import DishSelectorDrawer from '@/components/dishes/DishSelectorDrawer'
 import AssignPlanModal from '@/components/plans/AssignPlanModal'
 import { calculateDayMacros } from '@/lib/formulas/macros'
+import { FileText } from 'lucide-react'
 
 const MEAL_SLOTS: MealSlot[] = [
     'desayuno', 'colacion_manana', 'almuerzo',
@@ -197,15 +198,27 @@ export default function PlanEditorPage({ params }: { params: { id: string } }) {
                     </h1>
                 </div>
                 {!isNew && (
-                    <button
-                        onClick={() => setIsAssignModalOpen(true)}
-                        className="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-bold px-4 py-2 rounded-xl text-sm transition-colors flex items-center space-x-2"
-                    >
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        <span className="hidden sm:inline">Asignar Paciente</span>
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <a
+                            href={`/api/pdf/plan/${params.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-slate-50 text-slate-600 hover:bg-slate-100 font-bold px-4 py-2 rounded-xl text-sm transition-colors flex items-center space-x-2"
+                        >
+                            <FileText className="w-5 h-5 text-teal-600" />
+                            <span className="hidden sm:inline">Exportar PDF</span>
+                        </a>
+
+                        <button
+                            onClick={() => setIsAssignModalOpen(true)}
+                            className="bg-indigo-50 text-indigo-600 hover:bg-indigo-100 font-bold px-4 py-2 rounded-xl text-sm transition-colors flex items-center space-x-2"
+                        >
+                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                            <span className="hidden sm:inline">Asignar Paciente</span>
+                        </button>
+                    </div>
                 )}
             </header>
 

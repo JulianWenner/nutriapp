@@ -2,6 +2,8 @@ import React from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import EmptyState from '@/components/ui/EmptyState'
+import { Users } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -57,8 +59,12 @@ export default async function AntropometriaIndex() {
                         </li>
                     ))}
                     {!patients?.length && (
-                        <div className="p-12 text-center text-slate-500">
-                            Todavía no hay pacientes registrados en el sistema.
+                        <div className="p-8">
+                            <EmptyState
+                                icon={Users}
+                                title="Sin pacientes aún"
+                                description="Todavía no hay pacientes registrados en el sistema de nutrición."
+                            />
                         </div>
                     )}
                 </ul>
