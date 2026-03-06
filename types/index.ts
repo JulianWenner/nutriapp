@@ -179,3 +179,75 @@ export const TAG_LABELS: Record<string, string> = {
   alto_proteina: 'Alto en proteína',
   otro: 'Otro',
 }
+
+// --- Fase 4: Antropometría ---
+
+export type ISAKLevel = 1 | 2
+export type RangeCategory = 'normal' | 'limite' | 'riesgo' | 'referencia'
+export type BodyZone = 'chest' | 'waist' | 'hips' | 'arms' | 'thighs' | 'calves' | 'back'
+
+export interface AnthropometryMeasures {
+  // Básicos
+  weight_kg: number
+  height_cm: number
+  // Pliegues N1
+  skinfold_triceps?: number
+  skinfold_subscapular?: number
+  skinfold_suprailiac?: number
+  skinfold_calf_medial?: number
+  // Pliegues N2 adicionales
+  skinfold_biceps?: number
+  skinfold_iliac_crest?: number
+  skinfold_abdominal?: number
+  skinfold_front_thigh?: number
+  // Circunferencias N1
+  circ_waist?: number
+  circ_hip?: number
+  circ_arm_relaxed?: number
+  circ_calf?: number
+  // Circunferencias N2 adicionales
+  circ_head?: number
+  circ_neck?: number
+  circ_arm_flexed?: number
+  circ_mid_thigh?: number
+  // Diámetros N2
+  diam_humerus?: number
+  diam_femur?: number
+  // Longitudes N2
+  height_sitting?: number
+  wingspan?: number
+}
+
+export interface AnthropometryResult {
+  value: number
+  category: RangeCategory
+  label: string           // texto legible de la categoría
+  reference: string       // ej: "18.5 – 24.9"
+}
+
+export interface AnthropometryResults {
+  bmi: AnthropometryResult
+  body_fat_pct: AnthropometryResult
+  muscle_mass_kg: AnthropometryResult
+  bone_mass_kg: AnthropometryResult
+  residual_mass_kg: AnthropometryResult
+  whr: AnthropometryResult
+  somatotype?: {
+    endomorphy: number
+    mesomorphy: number
+    ectomorphy: number
+    dominant: string      // "Mesomorfo", "Ectomorfo", "Endomorfo", etc
+  }
+}
+
+export interface AnthropometryEval {
+  id: string
+  patient_id: string
+  eval_date: string
+  isak_level: ISAKLevel
+  shared_with_patient: boolean
+  measures: AnthropometryMeasures
+  results?: AnthropometryResults
+  created_at: string
+}
+
