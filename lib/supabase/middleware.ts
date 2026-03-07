@@ -53,6 +53,16 @@ export async function updateSession(request: NextRequest) {
 
     const role = profile?.role
 
+    // Si hay usuario pero no hay perfil (ej. base de datos limpia pero cookies viejas), evitamos el loop infinito
+    if (user && !profile) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/login'
+        // Devolvemos el redirect borrando la cookie de auth
+        const response = NextResponse.redirect(url)
+        response.cookies.delete('sb-ieqempiczotlfvmdvsnm-auth-token')
+        return response
+    }
+
     // Protección de rutas por rol
     if (role === 'paciente' && pathname.startsWith('/dashboard')) {
         const url = request.nextUrl.clone()
