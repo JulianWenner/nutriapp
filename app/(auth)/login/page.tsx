@@ -36,6 +36,7 @@ export default function LoginPage() {
             .single()
 
         if (profileError || !profile) {
+            console.error('Error al obtener perfil:', profileError, profile)
             setError('No se encontró tu perfil. Contactá al administrador.')
             setLoading(false)
             return
