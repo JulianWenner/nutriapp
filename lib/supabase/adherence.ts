@@ -65,7 +65,7 @@ export function calculateAdherenceSummary(
     const completedMeals = adherence.filter(a => a.completed).length
     const percentage = totalMeals > 0 ? (completedMeals / totalMeals) * 100 : 0
 
-    constByDay = [1, 2, 3, 4, 5, 6, 7].map(day => {
+    const byDay = [1, 2, 3, 4, 5, 6, 7].map(day => {
         const dayPlanMeals = planMeals.filter(pm => pm.day_of_week === day)
         const dayMealIds = dayPlanMeals.map(pm => pm.id)
         const dayAdherence = adherence.filter(a => dayMealIds.includes(a.plan_meal_id) && a.completed)
@@ -86,7 +86,7 @@ export function calculateAdherenceSummary(
         total_meals: totalMeals,
         completed_meals: completedMeals,
         percentage: Math.round(percentage),
-        by_day: constByDay
+        by_day: byDay
     }
 }
 
