@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect } from 'react'
 import { ChatMessage } from '@/types'
-import { Bot, User, ImageIcon } from 'lucide-react'
+import { Bot, User } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 
 interface Props {
@@ -51,9 +51,11 @@ export default function ChatMessageList({ messages, isTyping }: Props) {
                                         <img src={msg.image_url} alt="Consulta" className="max-h-48 w-full object-cover" />
                                     </div>
                                 )}
-                                <ReactMarkdown className="prose prose-sm prose-slate dark:prose-invert">
-                                    {msg.content}
-                                </ReactMarkdown>
+                                <div className="prose prose-sm prose-slate dark:prose-invert">
+                                    <ReactMarkdown>
+                                        {msg.content}
+                                    </ReactMarkdown>
+                                </div>
                             </div>
                             <span className="text-[10px] text-slate-400 font-medium px-2 block">
                                 {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
